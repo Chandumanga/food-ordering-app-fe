@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { Navbar } from "./component/Navbar/Navbar";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { darkTheme } from "./Theme/DarkTheme";
+import { Home } from "./component/Home/Home";
+import { RestaurantDetails } from "./component/Restaurant/RestaurantDetails";
+import { Cart } from "./component/Cart/Cart";
+import { Profile } from "./component/Profile/Profile";
+import { CustomerRoute } from "./routers/CustomerRoute";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "./component/State/Authentication/Action";
+import { findCart } from "./component/State/Cart/Action";
+import { Routers } from "./routers/Routers";
+import { getRestaurantByUserId } from "./component/State/Restaurant/Action";
 
 function App() {
+  const dispatch = useDispatch();
+  const jwt = localStorage.getItem("jwt");
+  const { auth } = useSelector((store) => store);
+  useEffect(() => {
+    dispatch(getUser(auth.jwt || jwt));
+    dispatch(findCart(jwt));
+  }, [auth.jwt]);
+
+  useEffect(() => {
+    dispatch(getRestaurantByUserId(auth.jwt || jwt));
+  }, [auth.user]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Routers />
+    </ThemeProvider>
   );
 }
 
